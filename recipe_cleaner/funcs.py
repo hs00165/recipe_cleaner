@@ -12,6 +12,8 @@ from nltk.stem import PorterStemmer
 from nltk.tokenize import word_tokenize
 
 
+# test
+
 def ingredients_match_score(section_list, final_ingredients_list, toggle_score_method):
 
 	score = 0

@@ -16,7 +16,7 @@ print("===============================================================")
 print("=======  Recipe_cleaner:  Generating training data  ===========")
 print("===============================================================")
 
-# reading in the file with the list of web addresses
+# reading in the file with the list of web addresses ##
 web_list = open('../data/web_list.dat', 'r')
 web_addresses = web_list.readlines()
 
