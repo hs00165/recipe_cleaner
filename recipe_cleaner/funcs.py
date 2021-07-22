@@ -12,10 +12,6 @@ from nltk.stem import PorterStemmer
 from nltk.tokenize import word_tokenize
 
 
-def is_ascii(s):
-    return all(ord(c) < 128 for c in s)
-
-
 def ingredients_match_score(section_list, final_ingredients_list, toggle_score_method):
 
 	score = 0
