@@ -50,15 +50,29 @@ def get_section_list(web_address):
 
 	# ======= Generating the section lists for each section of the webpage =========
 	# ==============================================================================
-	target = soup.find_all(["h1", "h2", "h3", "h4"])
+	target = soup.find_all(["h1", "h2", "h3"])
 
 	for i in range(len(target)):
-	    for sib in target[i].find_next_siblings():
-	        if sib.name=="h1" or sib.name=="h2" or sib.name=="h3" or sib.name=="h4" :
-	            break
-	        else:
-	            heading_list.append(target[i].text.strip())
-	            section_list.append(sib.text)
+
+		# If the header has siblings
+		if len(target[i].find_next_siblings()) >= 1:
+		    for sib in target[i].find_next_siblings():
+		        if sib.name=="h1" or sib.name=="h2" or sib.name=="h3":
+		            break
+		        else:
+		            heading_list.append(target[i].text.strip())
+		            section_list.append(sib.text)
+
+		# If the header has no siblings,
+		# search for parents!
+		if len(target[i].find_next_siblings()) == 0:
+			for uncles in target[i].parent.find_next_siblings():
+				if uncles.name=="h1" or uncles.name=="h2" or uncles.name=="h3" or uncles.name=="h4":
+					break
+				else:
+					heading_list.append(target[i].text.strip())
+					section_list.append(uncles.text.strip())
+
 
 	return section_list
 
@@ -98,7 +112,6 @@ def get_ingredients(web_address):
 
 	scraper = scrape_me(web_address)
 	ingredients_list = scraper.ingredients()
-	instructions_list = scraper.instructions()
 
 	# Editting the ingredients list to have no punctuation and use stemming
 	# - splitting the ingredients into a list of strings
@@ -228,6 +241,8 @@ def generate_training_example(web_address):
 	# ==============================================================================
 	final_ingredients_list = get_ingredients(web_address)
 
+
+
 	# =========================================================================
 	# Looping through each section, extracting the individual words and scoring 
 	# them based on their similarity to the recipe_scrapers ingredients list.
@@ -270,5 +285,14 @@ def generate_training_example(web_address):
 	            csvwriter.writerow(section)
 	        section_count += 1
 
-	print(sim_score_record)
 
+
+	print("")
+	print("")
+	print("")
+	print("")
+	print("==================="+str(sim_score_record)+"=======================")
+	print(final_ingredients_list)
+	print("")
+	print(section_matrix[sim_score_record_count])
+	print("====================================================")

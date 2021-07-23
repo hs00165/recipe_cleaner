@@ -12,23 +12,31 @@ from recipe_scrapers import scrape_me
 from nltk.stem import PorterStemmer
 from nltk.tokenize import word_tokenize
 
-print("===============================================================")
-print("=======  Recipe_cleaner:  Generating training data  ===========")
-print("===============================================================")
-
-# reading in the file with the list of web addresses ##
-web_list = open('../data/web_list.dat', 'r')
-web_addresses = web_list.readlines()
-
-# overwriting and emptying the current vocab list
-file = open("../data/training_data_file.csv", "w")
-file.close()
-
-for web_address in web_addresses:
-    print(web_address)
-    funcs.generate_training_example(web_address)
 
 
+def main():
+
+	print("===============================================================")
+	print("=======  Recipe_cleaner:  Generating training data  ===========")
+	print("===============================================================")
+
+
+	with open('../data/web_list.dat') as f:
+		mylist = f.read().splitlines()
+	print(mylist)
+
+
+	# overwriting and emptying the current vocab list
+	file = open("../data/training_data_file.csv", "w")
+	file.close()
+
+	for website in mylist:
+	    funcs.generate_training_example(str(website))
+
+
+
+if __name__ == "__main__":
+	main()
 
 
 # PLAN OF ACTION
