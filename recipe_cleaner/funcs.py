@@ -50,30 +50,70 @@ def get_section_list(web_address):
 
 	# ======= Generating the section lists for each section of the webpage =========
 	# ==============================================================================
-	target = soup.find_all(["h1", "h2", "h3"])
+	target = soup.find_all(["h1", "h2", "h3", "h4"])
 
 	for i in range(len(target)):
-
-		# If the header has siblings
-		if len(target[i].find_next_siblings()) >= 1:
+		exit_flag = 0
+		# If the header has siblings,
+		# search through siblings
+		if len(target[i].find_next_siblings()) >= 1 and exit_flag==0:
 		    for sib in target[i].find_next_siblings():
-		        if sib.name=="h1" or sib.name=="h2" or sib.name=="h3":
+		        if sib.name=="h1" or sib.name=="h2" or sib.name=="h3" or sib.name=="h4":
+		            exit_flag=1
 		            break
 		        else:
 		            heading_list.append(target[i].text.strip())
 		            section_list.append(sib.text)
-
 		# If the header has no siblings,
-		# search for parents!
-		if len(target[i].find_next_siblings()) == 0:
+		# search through parents!
+		if exit_flag==0:
 			for uncles in target[i].parent.find_next_siblings():
 				if uncles.name=="h1" or uncles.name=="h2" or uncles.name=="h3" or uncles.name=="h4":
+					exit_flag=1
 					break
 				else:
 					heading_list.append(target[i].text.strip())
 					section_list.append(uncles.text.strip())
-
-
+		# If the parent isn't the header,
+		# search for grand parents!
+		if exit_flag==0:
+			for great_uncles in target[i].parent.parent.find_next_siblings():
+				if great_uncles.name=="h1" or great_uncles.name=="h2" or great_uncles.name=="h3" or great_uncles.name=="h4":
+					exit_flag=1
+					break
+				else:
+					heading_list.append(target[i].text.strip())
+					section_list.append(great_uncles.text.strip())
+		# If the g parent isn't the header,
+		# search for grand parents!
+		if exit_flag==0:
+			for gg_uncles in target[i].parent.parent.parent.find_next_siblings():
+				if gg_uncles.name=="h1" or gg_uncles.name=="h2" or gg_uncles.name=="h3" or gg_uncles.name=="h4":
+					exit_flag=1
+					break
+				else:
+					heading_list.append(target[i].text.strip())
+					section_list.append(gg_uncles.text.strip())
+		# If the gg parent isn't the header,
+		# search for grand parents!
+		if exit_flag==0:
+			for ggg_uncles in target[i].parent.parent.parent.parent.find_next_siblings():
+				if ggg_uncles.name=="h1" or ggg_uncles.name=="h2" or ggg_uncles.name=="h3" or ggg_uncles.name=="h4":
+					exit_flag=1
+					break
+				else:
+					heading_list.append(target[i].text.strip())
+					section_list.append(ggg_uncles.text.strip())
+		# If the ggg parent isn't the header,
+		# search for grand parents!
+		if exit_flag==0:
+			for gggg_uncles in target[i].parent.parent.parent.parent.parent.find_next_siblings():
+				if gggg_uncles.name=="h1" or gggg_uncles.name=="h2" or gggg_uncles.name=="h3" or gggg_uncles.name=="h4":
+					exit_flag=1
+					break
+				else:
+					heading_list.append(target[i].text.strip())
+					section_list.append(gggg_uncles.text.strip())
 	return section_list
 
 def get_heading_list(web_address):
@@ -241,8 +281,6 @@ def generate_training_example(web_address):
 	# ==============================================================================
 	final_ingredients_list = get_ingredients(web_address)
 
-
-
 	# =========================================================================
 	# Looping through each section, extracting the individual words and scoring 
 	# them based on their similarity to the recipe_scrapers ingredients list.
@@ -263,6 +301,9 @@ def generate_training_example(web_address):
 	    # their product for the final score.
 	    sim_score1 = ingredients_match_score(final_section_text, final_ingredients_list, 1)
 	    sim_score2 = ingredients_match_score(final_section_text, final_ingredients_list, 2)
+	    # print("score1:  "+str(sim_score1)+"    "+str(sim_score1*sim_score2))
+	    # print("score2:  "+str(sim_score2))
+
 	    comb_sim_score.append(sim_score1*sim_score2)
 	    if sim_score1*sim_score2 > sim_score_record:
 	        sim_score_record = sim_score1*sim_score2
