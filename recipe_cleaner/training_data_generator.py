@@ -22,15 +22,16 @@ def main():
 
 
 	with open('../data/web_list.dat') as f:
-		mylist = f.read().splitlines()
-	print(mylist)
+		web_list = f.read().splitlines()
+	print(web_list)
+	web_list.reverse()
 
 
 	# overwriting and emptying the current vocab list
 	file = open("../data/training_data_file.csv", "w")
 	file.close()
 
-	for website in mylist:
+	for website in web_list:
 	    funcs.generate_training_example(str(website))
 
 

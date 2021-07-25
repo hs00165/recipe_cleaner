@@ -66,7 +66,7 @@ def get_section_list(web_address):
 		            section_list.append(sib.text)
 		# If the header has no siblings,
 		# search through parents!
-		if exit_flag==0:
+		if exit_flag==0 and target[i].parent is not None:
 			for uncles in target[i].parent.find_next_siblings():
 				if uncles.name=="h1" or uncles.name=="h2" or uncles.name=="h3" or uncles.name=="h4":
 					exit_flag=1
@@ -76,7 +76,7 @@ def get_section_list(web_address):
 					section_list.append(uncles.text.strip())
 		# If the parent isn't the header,
 		# search for grand parents!
-		if exit_flag==0:
+		if exit_flag==0 and target[i].parent.parent is not None:
 			for great_uncles in target[i].parent.parent.find_next_siblings():
 				if great_uncles.name=="h1" or great_uncles.name=="h2" or great_uncles.name=="h3" or great_uncles.name=="h4":
 					exit_flag=1
@@ -86,7 +86,7 @@ def get_section_list(web_address):
 					section_list.append(great_uncles.text.strip())
 		# If the g parent isn't the header,
 		# search for grand parents!
-		if exit_flag==0:
+		if exit_flag==0 and target[i].parent.parent.parent is not None:
 			for gg_uncles in target[i].parent.parent.parent.find_next_siblings():
 				if gg_uncles.name=="h1" or gg_uncles.name=="h2" or gg_uncles.name=="h3" or gg_uncles.name=="h4":
 					exit_flag=1
@@ -96,7 +96,7 @@ def get_section_list(web_address):
 					section_list.append(gg_uncles.text.strip())
 		# If the gg parent isn't the header,
 		# search for grand parents!
-		if exit_flag==0:
+		if exit_flag==0 and target[i].parent.parent.parent.parent is not None:
 			for ggg_uncles in target[i].parent.parent.parent.parent.find_next_siblings():
 				if ggg_uncles.name=="h1" or ggg_uncles.name=="h2" or ggg_uncles.name=="h3" or ggg_uncles.name=="h4":
 					exit_flag=1
@@ -106,7 +106,7 @@ def get_section_list(web_address):
 					section_list.append(ggg_uncles.text.strip())
 		# If the ggg parent isn't the header,
 		# search for grand parents!
-		if exit_flag==0:
+		if exit_flag==0 and target[i].parent.parent.parent.parent.parent is not None:
 			for gggg_uncles in target[i].parent.parent.parent.parent.parent.find_next_siblings():
 				if gggg_uncles.name=="h1" or gggg_uncles.name=="h2" or gggg_uncles.name=="h3" or gggg_uncles.name=="h4":
 					exit_flag=1
@@ -311,20 +311,21 @@ def generate_training_example(web_address):
 	    section_count += 1
 
 	with open('../data/training_data_file.csv', 'a', newline='') as training_data_file:
-	    csvwriter = csv.writer(training_data_file)
-	    section_count = 0
-	    for section in section_matrix:
-	        if section_count == sim_score_record_count:
-	            section.insert(0,web_address)
-	            section.insert(0,comb_sim_score[section_count])
-	            section.insert(0,1)
-	            csvwriter.writerow(section)
-	        else:
-	            section.insert(0,web_address)
-	            section.insert(0,comb_sim_score[section_count])
-	            section.insert(0,0)
-	            csvwriter.writerow(section)
-	        section_count += 1
+		csvwriter = csv.writer(training_data_file)
+		section_count = 0
+		for section in section_matrix:
+			if(len(section) >= 1):
+				if section_count == sim_score_record_count:
+					section.insert(0,web_address)
+					section.insert(0,comb_sim_score[section_count])
+					section.insert(0,1)
+					csvwriter.writerow(section)
+				else:
+					section.insert(0,web_address)
+					section.insert(0,comb_sim_score[section_count])
+					section.insert(0,0)
+					csvwriter.writerow(section)
+			section_count += 1
 
 
 
